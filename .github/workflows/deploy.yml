@@ -39,7 +39,7 @@ jobs:
     - name: Deploy to AWS
       uses: appleboy/ssh-action@master
       with:
-        host: 44.212.21.72 
+        host: 54.173.87.104
         username: ec2-user
         key: -----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAz4GS1mJrLwTC3P11HFeEFqTjlhrKAuk07PZsc/Q0K3sfzLI7
