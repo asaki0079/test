@@ -1,0 +1,50 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: |
+        npm install  # 或其他依賴安裝命令
+        
+    - name: Run tests
+      run: |
+        npm test    # 或其他測試命令
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: |
+        npm install  # 或其他依賴安裝命令
+        
+    - name: Build application
+      run: |
+        npm run build  # 或其他構建命令
+        
+    - name: Deploy to AWS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.AWS_HOST }}
+        username: ${{ secrets.AWS_USERNAME }}
+        key: ${{ secrets.AWS_SSH_KEY }}
+        port: ${{ secrets.AWS_PORT }}
+        script: |
+          cd /var/www/html
+          git pull origin main
+          npm install --production
+          pm2 restart your-app  # 或其他重啟命令
