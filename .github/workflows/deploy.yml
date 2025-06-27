@@ -1,0 +1,76 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: |
+        npm install  # 或其他依賴安裝命令
+        
+    - name: Run tests
+      run: |
+        npm test    # 或其他測試命令
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: |
+        npm install  # 或其他依賴安裝命令
+        
+    - name: Build application
+      run: |
+        npm run build  # 或其他構建命令
+        
+    - name: Deploy to AWS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ 44.212.21.72  }}
+        username: ${{ ec2-user }}
+        key: ${{ -----BEGIN RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEAz4GS1mJrLwTC3P11HFeEFqTjlhrKAuk07PZsc/Q0K3sfzLI7
+xGuV/NHe4A5DgrTOUhMyMml8jRpWZc8F6FyhdqIWi59L8Gtn6iiqGanWJGTMq8TI
+l94OonzaPK4Q8A3t9bg8TaUOW6djFgUV8cvXCZg3WEJTJkc9eKcJn1iAr7QCiMQp
+5cJnIwiod6HAa6OVuwFkrgEq6XqsZDpBZ/ZeFcmJricVYlTD+RNrfCep2+FCQwz8
+winaQGsiyaCargFxXErPUB4P38cVT2FgWqyLsj8cvCIHtS6YSktPK2xP4HWuBCTk
++B3xi0rJYJ6tzHgxL6NACPU9F9qzPMIImfIzxwIDAQABAoIBAQC0k8X82tj7qeEJ
+/2eSqnZAXm3PirCRp/Bu5mOq5LEhxZv+vnxUimuT/+88fC0z6bRCqIHebP3+rRTS
+tD4n37SDULrd9lpXdqCPnaOpgarhMPcL48vMnWmO7afddn026mhSlWmlCCZejGQm
+HXbjXMhdiSFgpRdHEGfmPzaYfKRAQY1W7TbFcJPGLIq83Zpj/CWlGc/UVCEZqL3+
+rov/LYykkikOOEqidtxT3Zyuy4JUAckaVfH+RCq2eBophCkspGkpJdsT2qOZI1d6
+WFbHY9Y6FSVaILT8JPIEjoKN+QWnG1T8I4NmgMpaoiY1vKwQGgM3ap/RTTk6WBz7
+p33MHksBAoGBAOtWnMILKR7B0jGO2stsDH5Zfzos1wVOsYrt5/ZGyN8/2k1j/faf
+XneB6hktWqXshY1N4RP9PcQ8gZ4cOUUYXRslZn4Q31LkrVkraBePh8ou6R7GKqQC
+vh2U/3w7DIFpS4mwipQ7xrrsTbtu3t4RLaGulll1f7nj9ZgQlkUqQ8rXAoGBAOG5
+agdH6SPv4WPxUngrVbFIu7UEN5axsBE7zeHsq7yXPdo3+/pWOI604aSzYgkSfs23
+hNaLS6Mg4O7a33CoJXEfKPUqwDsdU8MeDKuncAiECflLujQPHRHF/edsWrDpR/bn
+OaYMSu2sU6D+syCUKIoKF2PGf/ydf87Y++zcHDCRAoGBAI6jfnu2HARCYc4b0c09
+/gyO3ig6iVD0M3QLYm7I1HNL1lrV4lYanj09BtCfxrOOuhu9OlDNSySnr8BPRv70
+F2qerpJ2U4WAiPjk8EBnhFwtNqqqXanu56AycO+xMpE1as1XrYbO/FLLawnR108t
+hkTa9tHd/76BxpeWZh4h0dkdAoGATNugUahXpwfn2+rwpMBEpl/YojM0ZlhMViHh
+4Xp/o3Bv/Byx7LRs/5Jxfm4iBGrKyGsjjRXTBFGOpWXbTPXEAfeVL52F5NsAiWBy
++gPCLvQenUb+uPkoccPTx3fqjXBxM43Z4EMxRCo4M4pmHcK05wO2oR+WtsI+IYVa
+inUMGDECgYEA12SYJ1OoaIVhv8dbBPomrUBoKPiPzp/zXkwOKW0z0GYTiprGf4QW
+qEu2klX9j2Jni+J6RBnYuPNpazrr48ODEs4Wd1nE26CYwBKrWiIhqh5CURuXxhDI
+INeNe9zcdo9dVx1DCWKjhl7hD476zTjyYuekr3cRJkdw4QeZ7UZp2d8=
+-----END RSA PRIVATE KEY----- }}
+        port: ${{ 22 }}
+        script: |
+          cd /var/www/html
+          git pull origin main
+          npm install --production
+          pm2 restart your-app
